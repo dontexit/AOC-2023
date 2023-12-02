@@ -15,14 +15,14 @@ int main(void){
        }
         
        while(getline(&line,&len,file) !=-1){
-                        printf("%s",line);
+                        //printf("%s",line);
             c[0]='\0';
             c[1]='\0';
 
             for(int i=0;line[i] != '\0'; i++){
                 if (!isspace((unsigned char)line[i])) {
                     if(isdigit((unsigned char) line[i])){
-                       printf("%c \n ",line[i]);
+                       //printf("%c \n ",line[i]);
                        if(inc == 0){
                             c[0] = line[i];
                             inc++;
@@ -44,7 +44,7 @@ int main(void){
                     }
                  }
                  sum += atoi(c);
-                printf("%c%c %d\n",c[0],c[1],sum);
+                //printf("%c%c %d\n",c[0],c[1],sum);
                 inc=0;
                                 
        }
