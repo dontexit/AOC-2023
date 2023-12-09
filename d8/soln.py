@@ -33,7 +33,7 @@ def calclucate(map,instr):
     c=0
     while True: 
         c+=1
-        print("count",c,"\n",i)
+        # print("count",c,"\n",i)
         # lim=len(instr)-1
         # print("lim",lim)
         # if i > len(instr)-1:
@@ -43,9 +43,9 @@ def calclucate(map,instr):
         # if i == 0:
             # break
         val = map[key][next]
-        print("i: ",i,"key: ",key,"next: ",next,"val: ",val)
+        # print("i: ",i,"key: ",key,"next: ",next,"val: ",val)
         if val == "ZZZ":
-            print("Found Z")
+            # print("Found Z")
             break
         else:
             print("in else")
