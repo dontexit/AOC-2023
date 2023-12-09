@@ -25,35 +25,43 @@ def parse():
     print(len(n),len(m.keys()))
     
     return [n,m]    
+
 def calclucate(map,instr):
     i=0
     next = instr[0]
-    key = "AAA"
+    keys = list(map.keys())
+    keys=[]
+    lim=len(instr)-1
+    for k in keys:
+        if k[2]=="A":
+            keys.append(k)
 
     c=0
     while True: 
         c+=1
         print("count",c,"\n",i)
-        # lim=len(instr)-1
-        # print("lim",lim)
-        # if i > len(instr)-1:
-        #         print(i,"greate than ",lim)
-        #         i=0 
-        # print(key,next,lim,i)
-        # if i == 0:
-            # break
-        val = map[key][next]
-        print("i: ",i,"key: ",key,"next: ",next,"val: ",val)
-        if val == "ZZZ":
-            print("Found Z")
+        matched = False
+        for index,key in enumerate(keys):
+            val = map[key][next]
+            if val[2] == "Z":
+                keys[index]=val
+                matched=True
+                continue
+            else:
+                keys[index]=val
+                matched=False
+
+
+        if matched:
             break
+            
+        # print("i: ",i,"key: ",key,"next: ",next,"val: ",val)
         else:
-            print("in else")
-            if i < len(instr)-1:
+            # print("in else")
+            if i < lim:
                 i+=1
             else:
                 i=0
-            key = val
             next=instr[i]
             continue
     
