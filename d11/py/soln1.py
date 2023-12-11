@@ -22,64 +22,56 @@ def parse() -> list[list[str]]:
 
     # print(m)
     return m
-def expand_column(m):
-    cl=[]
+   
+def empty_colmns(m):
+    ec=[]
     for i in range(len(m[0])):
-        c=[]
         has_star=False
         for j in range(len(m)):
             # print(j,i)
             ci=m[j][i]
             # print(ci)
             if ci == "#":
-                has_star = True
-            c.append(ci)
+                has_star=True
         if not has_star:
-             # print("nostar",c)
-             for i in range(999999-1):
-                cl.append(c)
-        else:
-             # print("star",c)
-             cl.append(c)
+            ec.append(i)
 
-    
-    return flip_col(cl)
-        
-def expand_row(m):
-    cl=[]
-    print("row")
+def empty_rows(m):
+    er=[]
     for i in range(len(m)):
-            c=[]
-            has_star=False
-            for j in range(len(m[0])):
-                # print(j,i)
-                ci=m[i][j]
-                if ci == "#":
-                    has_star = True
-                c.append(ci)
-            if not has_star:
-                 # print("nostar",c)
-                for i in range(999999-1):
-                    cl.append(c)
+        has_star=False
+        for j in range(len(m[0])):
+            # print(i,j)
+            el=m[i,j]
+            if el == "#":
+                has_star=True
+        if not has_star:
+            er.append(i)
 
-            else:
-                 # print("star",c)
-                 cl.append(c)
-            
-    return cl    
+
     
-    
-def get_star_cordinates(m:list[list[str]]):
+def get_star_cordinates(m:list[list[str]],xvl):
+    m1=999999
     gm :list[Galaxy]=[]
     count=0
+    ymils = 0
     for i in range(len(m)):
+        has_stars=False
         for j in range(len(m[i])):
+            xmils=0
+            for v in xvl:
+                if j >= v:
+                    xmils+=m1
             ce = m[i][j]
             if ce == "#":
-                gc :Cordinate = {"x":j,"y":i}
+                has_stars = True
+                print(i,j,xmils,ymils)
+                gc :Cordinate = {"x":j+xmils,"y":i+ymils}
                 g:Galaxy = {"name":count,"position":gc} 
                 gm.append(g)
                 count+=1
+        if not has_stars:
+            ymils+=m1
 
     print(count)
     return gm
@@ -96,19 +88,25 @@ def flip_col(m):
         # print(cl)
         cl.append(c)
     return cl
-
-# def get_columns(m):
-#
-#     columns = ['' for _ in range(num_columns)]
-#
-#     # Iterate through each row and append characters to the corresponding column
-#     for row in pattern:
-#         for col_index, char in enumerate(row):
-#             columns[col_index] += char
+   
 def calculate_distance(c1,c):
     x = c1["x"] - c["x"]
     y = c1["y"] - c["y"]
     return abs(x)+abs(y)
+def get_x_voids(m):
+    vl=[]
+    for i in range(len(m[0])):
+        has_stars = False
+        for j in range(len(m)):
+            # print(j,i)
+            cl=m[j][i]
+            if cl == "#":
+                has_stars = True
+        if not has_stars:
+            vl.append(i)
+    return vl
+            
+
 def get_cordinates_sum(m:list[Galaxy]):
     total = 0
     count=0
@@ -118,15 +116,12 @@ def get_cordinates_sum(m:list[Galaxy]):
             f=m[i]["position"]
             s=m[j]["position"]
             sum=calculate_distance(s,f)
-            print(sum)
+            # print(sum)
             total+=sum
     print(count,total)
     return total
-m=parse()           
-print(m)
-em=expand_column(m)
-em=expand_row(em)
-em = get_star_cordinates(em)
-print(em)
-cs=get_cordinates_sum(em)
-print(cs)
+m=parse()
+vl=get_x_voids(m)
+m= get_cordinates_sum(get_star_cordinates(parse(),vl))
+
+
