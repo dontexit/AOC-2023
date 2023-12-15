@@ -50,7 +50,7 @@ def solve_pattern(m):
       rc[1] = (i + 1)
       break
   if rc[0] > rc[1]:
-      return rc[0] * 100
+      return rc[0] 
   else:
     return rc[1]
 
