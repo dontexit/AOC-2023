@@ -29,6 +29,7 @@ class Hand:
        self.repeats={}
        self.get_repeats()
        self.order_repeats()
+       self.sort_repeats_values()
        self.highest=self.repeats[list(self.repeats.keys())[0]]
        
        
@@ -40,10 +41,10 @@ class Hand:
       else:
         self.repeats[card]=1
  
-  def sort_repeats(self):  
+  def sort_repeats_values(self):  
       keys=list(self.repeats.keys())
       repeats = self.repeats
-      for i in range(len(keys)):
+      for i in range(len(keys)-1):
           if self.repeats[keys[i+1]] == self.repeats[keys[i]]:
             if get_value(keys[i+1]) > get_value(keys[i]):
                     t=self.repeats[keys[i]]
@@ -94,72 +95,13 @@ def sort_highest(gl:list[int],hands:list[Hand])->list[Hand]:
                     nl.append(hand)
                     hands.remove(hand)
     return nl
-def calculate_sort(oh:list[Hand]) -> list[Hand]:
-    rl :list[Hand] = []
-    for i in range(len(oh)):
-        # print("\n",oh[i].repeats,"\n")
-        for j in range(i+1,len(oh)-1):
-            print(i,j,"\n")
-            # print(oh[j+1].repeats)
-            k1=list(oh[i].repeats.keys())
-            k2=list(oh[j].repeats.keys())
-            r1=oh[i].repeats
-            r2=oh[j].repeats
-            res=False
-            for k in range(len(k1)):
-                c1 = r1[k1[k]]
-                if k <= len(k2)-1:
-                    c2=r2[k2[k]]
-                else:
-                    rl.append(oh[i])
-                    res=True
-                    break
-                
-                if c1 > c2:
-                    rl.append(oh[i]) 
-                    res=True
-                    break
-                if c1 ==1 and c2==1:
-                    break
-                if c1 == c2:
-                    continue
-                if c2 > c1:
-                    t=oh[i]
-                    oh[i]=oh[j]
-                    oh[j]=t
-                    rl.append(oh[i])
-                    res =True
-                    break
-            if not res:
-                for k in range(len(k1)):
-                    c1 =  get_value(k1[k])
-                    c2=get_value(k2[k])
-                    if c1> c2:
-                        rl.append(oh[i]) 
-                        res=True
-                        break
-                    if c1 ==1 and c2==1:
-                        break
-                    if c1 == c2:
-                        continue
-                    else:
-                        t=oh[i]
-                        oh[i]=oh[j]
-                        oh[j]=t
-                        res=True
-                        rl.append(oh[i])
-                        break
-            else:
-                break
 
-    
-    return rl
 
 m=parse_file()
 hl: list[Hand]=create_hands_list(m)
 oh=sort_highest(order_highest(hl),hl)
 
-oh=calculate_sort(oh)
+# oh=calculate_sort(oh)
 
 for i in oh:
     print(i.repeats,"\n")
