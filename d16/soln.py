@@ -49,6 +49,7 @@ class Top(Cordinate):
     def __init__(self):
         super().__init__(x=0,y=-1)
         self.name="top"
+        self.symbol="^"
     def __str__(self):
         return "top " + "x: "+str(self.x)+" y: "+str(self.y)
 
@@ -58,6 +59,7 @@ class Bottom(Cordinate):
     def __init__(self):
         super().__init__(x=0,y=1)
         self.name="bottom"
+        self.symbol="v"
     def __str__(self):
         return "bottom " + "x: "+str(self.x)+" y: "+str(self.y)
 
@@ -68,6 +70,7 @@ class Left(Cordinate):
     def __init__(self):
         super().__init__(x=-1,y=0)
         self.name="left"
+        self.symbol="<"
     def __str__(self):
         return "left " + "x: "+str(self.x)+" y: "+str(self.y)
 
@@ -77,6 +80,7 @@ class Right(Cordinate):
     def __init__(self):
         super().__init__(x=1,y=0)
         self.name="right"
+        self.symbol=">"
     def __str__(self):
         return "right " +  "x: "+str(self.x)+" y: "+str(self.y)
 
@@ -84,7 +88,7 @@ class Right(Cordinate):
         return super().__str__()
 
 
-class Symbol(Cordinate):
+class Symbol():
     directions = [Right,Left,Top,Bottom]
     def __init__(self,symbol,openings,exits):
         self.symbol=symbol
@@ -92,14 +96,17 @@ class Symbol(Cordinate):
         self.exits = exits 
     
     def supports(self,direction):
-        direction_type = direction.__class__
+        direction_type = direction
         for opening in self.openings:
-            if opening == direction_type:
+            opening = opening()
+            if opening.x == direction.x and opening.y == direction.y:
+                print("supported")
                 return True        
         return False
 
     def get_exit(self,direction):
         if self.supports(direction):
+            print("direction for self",self,direction.name)
             return self.exits[direction.name]
         return []
             
@@ -137,13 +144,18 @@ def move(m):
     left_tilted_pipe=LeftTiltedPipe()
     symbols=[pipe,down_pipe,right_tilted_pipe,left_tilted_pipe]
     start :Cordinate = Cordinate(x=0,y=0)
-    directions=[[start,Right]]
-    # count = 20
+    directions=[]
+    count = 20
+    first = True
+
     while True:
         # count-=1
         # if count == 0:
         #     break
-
+        print("directions",directions)
+        if first:
+            directions.append([start,Right])
+            first = False
         if len(directions) == 0 :
                 # print(went)
                 for i in went:
@@ -160,10 +172,21 @@ def move(m):
                 # went[post.x][post.y] = "x"
                 cur_symbol = m[curr_position.y][curr_position.x]
                 if cur_symbol == ".":
-                    print("on a dot")
-
+                    print("on a dot \n",)
+                                        
                     pos = curr_position.get_dict()
-                    went[pos["y"]][pos["x"]] = "x"
+                    went_sym = went[pos["y"]][pos["x"]] 
+                    alr = False
+                    for dirs in [Left,Right,Top,Bottom]:
+                        if dirs().symbol == went_sym:
+                            went_sym = "2"
+                            alr=True
+                            # break
+                    if not alr:
+                        went[pos["y"]][pos["x"]] = curr_direction.symbol
+                    for i in went:
+                        print(i)
+
                     curr_position=curr_position.add(curr_direction)
 
                     directions[len(directions)-1][0]=curr_position
@@ -177,28 +200,31 @@ def move(m):
                             symbol_found = True
                             print("on symbol",symbol)
                             cur_symbol = symbol()
+                            print("check next for", "symbol:",cur_symbol,"direction: ",curr_direction)
                             next =cur_symbol.get_exit(curr_direction)
-                            print("get exits",next)
-                            if len(next) > 1:
-                                    # curr_position = copy.deepcopy(curr_position)
-                                    directions.pop()
-                                    directions.append([curr_position,next[1]])
-                                    curr_position = curr_position.add(curr_direction)
-                                    directions.append([curr_position,next[0]])
-                                    # pos = curr_position.get_dict()
-                                    # went[pos["y"]][pos["x"]] = "x"
+                            ln=len(next)
+                            print("get exits",next,len(next))
+                            if ln > 0:
+                                    if ln == 2:
+                                        # curr_position = copy.deepcopy(curr_position)
+                                        directions.pop()
+                                        directions.append([curr_position,next[1]])
+                                        
+                                        curr_position = curr_position.add(next[0]())
+                                        directions.append([curr_position,next[0]])
+                                        # pos = curr_position.get_dict()
+                                        # went[pos["y"]][pos["x"]] = "x"
+                                    if len(next) == 1:
+                                        directions.pop()
+                                        # curr_position = copy.deepcopy(curr_position)
+                                        curr_position=curr_position.add(next[0]())
+                                        # pos = curr_position.get_dict()
+                                        # went[pos["y"]][pos["x"]] = "x"
 
-                            if len(next) == 1:
-
-                                    directions.pop()
-                                    # curr_position = copy.deepcopy(curr_position)
-                                    curr_position=curr_position.add(next[0]())
-                                    # pos = curr_position.get_dict()
-                                    # went[pos["y"]][pos["x"]] = "x"
-
-                                    directions.append([curr_position,next[0]])
+                                        directions.append([curr_position,next[0]])
 
 
+                            
                             else:
                                 print("not supported")
                                 directions.pop()
@@ -208,7 +234,11 @@ def move(m):
                         break
 
             else:
+                print("out of bounds")
                 directions.pop()
+                if len(directions) > 0:
+                    curr_position = curr_position.add(directions[len(directions)-1][1]())
+                    directions[len(directions)-1][0]=curr_position
         
 
 m = parse()
