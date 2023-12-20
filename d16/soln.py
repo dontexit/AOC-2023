@@ -131,6 +131,23 @@ class LeftTiltedPipe(Symbol):
         exits = {"right":[Bottom],"left":[Top],"top":[Left],"bottom":[Right]}
         super().__init__(symbol="l",openings=openings,exits=exits)
 
+class CordinateCount(Cordinate):
+    def __init__(self,x,y):
+        super().__init__(x,y)
+        self.count=1
+
+
+
+def add_went(went,cord):
+    for wentp in went:
+        print(wentp.__dict__)
+        if wentp.x == cord.x and wentp.y == cord.y:
+            wentp.count+=1
+            return wentp.count
+    new = CordinateCount(cord.x,cord.y) 
+    went.append(new)
+    return 1
+
 
 def move(m):
     went = copy.deepcopy(m)
@@ -138,6 +155,7 @@ def move(m):
     # right = Right()
     # top = Top()
     # bottom = Bottom()
+    touched= []
     pipe=Pipe()
     down_pipe=DownPipe()
     right_tilted_pipe=RightTiltedPipe()
@@ -145,13 +163,13 @@ def move(m):
     symbols=[pipe,down_pipe,right_tilted_pipe,left_tilted_pipe]
     start :Cordinate = Cordinate(x=0,y=0)
     directions=[]
-    count = 20
+    count = 1000000 
     first = True
 
     while True:
-        # count-=1
-        # if count == 0:
-        #     break
+        count-=1
+        if count == 0:
+            break
         print("directions",directions)
         if first:
             directions.append([start,Right])
@@ -160,32 +178,43 @@ def move(m):
                 # print(went)
                 for i in went:
                     print(i)
+                print(touched)
                 print("no more directions")
                 break
         else:
             curr_direction = directions[len(directions)-1][1]()
             curr_position =  directions[len(directions)-1][0]
+
             print("curr_position",curr_position,"curr_direction",curr_direction) 
 
             if curr_position.x < len(m[0]) and curr_position.x >=0 and curr_position.y < len(m) and curr_position.y >=0 :
+                went_count = add_went(touched,curr_position)
+                if went_count > 10:
+                    directions = []
+                    continue 
                 # post = copy.deepcopy(curr_position)
-                # went[post.x][post.y] = "x"
+
+                pos = curr_position.get_dict()
+                went[pos["y"]][pos["x"]] = "x"
+ 
                 cur_symbol = m[curr_position.y][curr_position.x]
                 if cur_symbol == ".":
                     print("on a dot \n",)
                                         
+                    # pos = curr_position.get_dict()
+                    # went_sym = went[pos["y"]][pos["x"]] 
+                    # alr = False
+                    # for dirs in [Left,Right,Top,Bottom]:
+                    #     if dirs().symbol == went_sym:
+                    #         went_sym = "2"
+                    #         alr=True
+                    #         # break
+                    # if not alr:
+
                     pos = curr_position.get_dict()
-                    went_sym = went[pos["y"]][pos["x"]] 
-                    alr = False
-                    for dirs in [Left,Right,Top,Bottom]:
-                        if dirs().symbol == went_sym:
-                            went_sym = "2"
-                            alr=True
-                            # break
-                    if not alr:
-                        went[pos["y"]][pos["x"]] = curr_direction.symbol
-                    for i in went:
-                        print(i)
+                    # went[pos["y"]][pos["x"]] = "#"
+                    # for i in went:
+                    #     print(i)
 
                     curr_position=curr_position.add(curr_direction)
 
